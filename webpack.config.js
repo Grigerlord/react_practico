@@ -1,0 +1,80 @@
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+
+//REGLAS____________________________________________________________________
+const ruleBabel = {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    use: {
+        loader: 'babel-loader'
+    }
+}
+const ruleHtml = {
+    test: /\.html$/,
+    use: [
+        {
+            loader: 'html-loader'
+        }
+    ]
+}
+const ruleCss = {
+    test: /\.(css|scss)$/,
+    use: [
+        "style-loader",
+        "css-loader",
+        "sass-loader",
+    ]
+}
+const ruleImages = {
+    test: /\.(png|jpg|jpeg|svg|gif)$/,
+    type: 'asset/resource',
+            generator: {
+                filename: 'assets/pictures/[hash][ext]'
+            }
+}
+
+
+
+
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+        publicPath: '/'
+    },
+    mode: 'development',
+    resolve: {
+        extensions: ['.js', '.jsx'],
+        alias: {
+            '@components': path.resolve(__dirname, 'src/components/'),
+            '@containers': path.resolve(__dirname, 'src/containers/'),
+            '@styles': path.resolve(__dirname, 'src/styles/'),
+            '@icons': path.resolve(__dirname, 'src/assets/icons/'),
+            '@logos': path.resolve(__dirname, 'src/assets/logos/'),
+        }
+    },
+    module: {
+        rules: [ruleBabel, ruleHtml, ruleCss, ruleImages]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './public/index.html',
+            filename: './index.html'
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css'
+        })
+    ],
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'public'),
+        },
+        compress: true,
+        port: 3004,
+        historyApiFallback: true,
+    }
+}
